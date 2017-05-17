@@ -7,24 +7,33 @@ import java.util.GregorianCalendar;
  * @author xavier
  *
  */
+
 public class Medicine {
 	/**
 	 * Le nom du médicament
 	 */
 	private String name;
+	
 	/**
 	 * Forme pharmaceutique du médicament
 	 */
 	private Form itsForm;
+	
 	/**
-	 * /**
 	 * Effet indésirable du médicament
 	 */
 	private Effet lEffet;
+	
+	/**
+	 * Le d'administration du médicament
+	 */
+	private ModeAdmin leModeAdmin;
+	
 	/**
 	 * Date d'obtention du brevet pharmaceutique
 	 */
 	private GregorianCalendar patentDate;
+
 	/**
 	 * Liste statique de tous les médicaments
 	 */
@@ -36,15 +45,17 @@ public class Medicine {
 	 * @param itsForm forme pharmaceutique du nouveau médicament
 	 * @param patentDate date d'obtention du brevet du nouveau médicament
 	 */
-	public Medicine(String name, Form itsForm, Effet lEffet, GregorianCalendar patentDate) {
+	public Medicine(String name, Form itsForm, Effet lEffet, ModeAdmin leModeAdmin, GregorianCalendar patentDate) {
 		super();
 		this.name = name;
 		this.itsForm = itsForm;
 		this.lEffet = lEffet;
+		this.leModeAdmin = leModeAdmin;
 		this.patentDate = patentDate;
 		allTheMedicines.add(this);
 	}
 
+	
 	/**
 	 * Accesseur en lecture sur le nom du médicament
 	 * @return le nom du médicament
@@ -53,6 +64,7 @@ public class Medicine {
 		return name;
 	}
 
+	
 	/**
 	 * Accesseur en lecture sur la forme du médicament
 	 * @return la forme du médicament
@@ -61,7 +73,7 @@ public class Medicine {
 		return itsForm;
 	}
 
-	/**
+
 	/**
 	 * Accesseur en lecture sur l'effet indésirable du médicament
 	 * @return l'effet du médicament
@@ -70,6 +82,15 @@ public class Medicine {
 		return lEffet;
 	}
 
+	
+	 /**
+	 * Accesseur en lecture sur le mode d'administration du médicament
+	 * @return le mode d'administration du médicament
+	 */
+	public ModeAdmin getModeAdmin() {
+		return leModeAdmin;
+	}
+	
 	/**
 	 * Accesseur en lecture sur la date d'obtention du brevet du médicament
 	 * @return la date d'obtention du brevet du médicament
@@ -77,6 +98,7 @@ public class Medicine {
 	public GregorianCalendar getPatentDate() {
 		return patentDate;
 	}
+	
 	
 	/**
 	 * Méthode permettant de rechercher parmi tous les médicaments
@@ -93,6 +115,7 @@ public class Medicine {
 		return found;
 	}
 
+	
 	/**
 	 * Accesseur en écriture sur la forme du médicament
 	 * @param itsForm la nouvelle forme du médicament
@@ -104,11 +127,21 @@ public class Medicine {
 	
 	/**
 	 * Accesseur en écriture sur l'effet du médicament
-	 * @param itsForm le nouvel effet du médicament
+	 * @param lEffet le nouvel effet du médicament
 	 */
 	public void setEffet(Effet lEffet) {
 		this.lEffet = lEffet;
 	}
+	
+	
+	/**
+	 * Accesseur en écriture sur le mode d'administration du médicament
+	 * @param leModeAdmin le nouveau mode d'administration du médicament
+	 */
+	public void setModeAdmin(ModeAdmin leModeAdmin) {
+		this.leModeAdmin = leModeAdmin;
+	}
+	
 	
 	/**
 	 * Accesseur en écriture sur la date d'obtention du brevet du médicament

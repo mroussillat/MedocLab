@@ -49,7 +49,7 @@ public class Effet {
 	/**
 	 * Méthode permettant de rechercher parmi tous les effets
 	 * celui ayant un identifiant correspondant à celui passé en paramètre
-	 * @param id l'identifiant à rechercher
+	 * @param id l'identifiant à recherché
 	 * @return l'Effet correspondant
 	 */
 	public static Effet getEffetById(int id){
@@ -63,7 +63,7 @@ public class Effet {
 	/**
 	 * Méthode permettant de rechercher parmi tous les effets
 	 * celui ayant un nom correspondant à celui passé en paramètre
-	 * @param name le nom à rechercher
+	 * @param name le nom à recherché
 	 * @return l'Effet correspondant
 	 */
 	public static Effet getEffetByName(String name) {

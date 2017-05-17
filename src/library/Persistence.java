@@ -18,18 +18,20 @@ public abstract class Persistence {
 	 * Méthode d'INSERT d'un nouveau médicament
 	 * @param name le nom du nouveau médicament
 	 * @param idForm l'identifiant de la forme du nouveau médicament
+	 * @param idEffet l'identifiant de l'effet du nouveau médicament
+	 * @param idModeAdmin l'identifiant du ModeAdmin du nouveau médicament
 	 * @param patentDate la date d'obtention du brevet du nouveau médicament
 	 * @throws SQLException l'exception SQL levée
 	 */
-	public static void insertMedicine(String name, int idForm, int idEffet, GregorianCalendar patentDate) throws SQLException{
+	public static void insertMedicine(String name, int idForm, int idEffet, int idModeAdmin, GregorianCalendar patentDate) throws SQLException{
 		Connection cn = Persistence.connection();
 		Statement stmt;
 		try{
 			 stmt = cn.createStatement();
 			 if(patentDate!=null)
-				 stmt.executeUpdate("INSERT INTO medicament (nom,idForme,idEffetIndesirable,dateBrevet) VALUES ('"+name+"',"+idForm+","+idEffet+",'"+DatesConverter.dateToStringUS(patentDate)+"')");
+				 stmt.executeUpdate("INSERT INTO medicament (nom,idForme,idEffetIndesirable,idModeAdmin,dateBrevet) VALUES ('"+name+"',"+idForm+","+idEffet+","+idModeAdmin+",'"+DatesConverter.dateToStringUS(patentDate)+"')");
 			 else
-				 stmt.executeUpdate("INSERT INTO medicament (nom,idForme,idEffetIndesirable,dateBrevet) VALUES ('"+name+"',"+idForm+","+idEffet+",null)");
+				 stmt.executeUpdate("INSERT INTO medicament (nom,idForme,idEffetIndesirable,idModeAdmin,dateBrevet) VALUES ('"+name+"',"+idForm+","+idEffet+","+idModeAdmin+",null)");
 		}catch (SQLException e){
 			throw e;
 		}
@@ -47,7 +49,7 @@ public abstract class Persistence {
 		Statement stmt;
 		
 		try {
-			 stmt = cn.createStatement();
+			stmt = cn.createStatement();
 			stmt.executeUpdate("INSERT INTO forme (nom) VALUES ('"+name+"')");
 		} catch (SQLException e) {
 			throw e;
@@ -68,7 +70,7 @@ public abstract class Persistence {
 		Statement stmt;
 		
 		try {
-			 stmt = cn.createStatement();
+			stmt = cn.createStatement();
 			stmt.executeUpdate("INSERT INTO effet_indesirable (nom) VALUES ('"+name+"')");
 		} catch (SQLException e) {
 			throw e;
@@ -78,6 +80,26 @@ public abstract class Persistence {
 		}
 	}
 	
+	
+	/**
+	 * Méthode d'INSERT du nouveau ModeAdmin
+	 * @param name le nom du nouveau ModeAdmin
+	 * @throws SQLException l'exception SQL levée
+	 */
+	public static void insertModeAdmin(String name) throws SQLException{
+		Connection cn = Persistence.connection();
+		Statement stmt;
+		
+		try {
+			stmt = cn.createStatement();
+			stmt.executeUpdate("INSERT INTO mode_admin(nom) VALUES ('"+name+"')");
+		} catch (SQLException e) {
+			throw e;
+		}
+		finally{
+			Persistence.closeConnection(cn);
+		}
+	}
 	
 	/**
 	 * Méthode de SELECT des tables
@@ -110,7 +132,7 @@ public abstract class Persistence {
 			columnCount = metadata.getColumnCount();
 			//Déclaration du tableau qui contiendra toutes les informations
 			result = new String[rowCount][columnCount];
-			//PArcours du jeu d'enregistrement
+			//Parcours du jeu d'enregistrement
 			rowNum = 0;
 	        while (rs.next()) 
 	        {
@@ -141,7 +163,7 @@ public abstract class Persistence {
 	private static Connection connection() throws SQLException{
 //		String host = "192.168.222.72";
 		String host = "127.0.0.1:3306";
-		String base = "bmedoclab";
+		String base = "medoclab";
 		String user = "root";
 		String passwd = "";
 		Connection conn = null;
@@ -176,17 +198,18 @@ public abstract class Persistence {
 	 * @param name le nom du médicament à modifier
 	 * @param idForm la nouvelle forme du médicament à modifier
 	 * @param idEffet le nouvel effet du médicament à modifier
+	 * @param idEffet le nouveauModeAdmin du médicament à modifier
 	 * @param patentDate la nouvelle date d'obtention du brevet du médicament à modifier
 	 * @throws SQLException l'exception SQL levée
 	 */
-	public static void updateMedicine(String name, int idForm, int idEffet, GregorianCalendar patentDate) throws SQLException {
+	public static void updateMedicine(String name, int idForm, int idEffet, int idModeAdmin, GregorianCalendar patentDate) throws SQLException {
 		Connection cn = Persistence.connection();
 		Statement stmt;
 		try{
 			 stmt = cn.createStatement();
-			 stmt.executeUpdate("UPDATE medicament SET idForme="+idForm+", idEffetIndesirable="+idEffet+" WHERE nom='"+name+"'");
+			 stmt.executeUpdate("UPDATE medicament SET idForme="+idForm+", idEffetIndesirable="+idEffet+", idModeAdmin="+idModeAdmin+" WHERE nom='"+name+"'");
 			 if(patentDate!=null)
-				 stmt.executeUpdate("UPDATE medicament SET dateBrevet='"+DatesConverter.dateToStringUS(patentDate)+"', idEffetIndesirable="+idEffet+" WHERE nom='"+name+"'");
+				 stmt.executeUpdate("UPDATE medicament SET dateBrevet='"+DatesConverter.dateToStringUS(patentDate)+"', idEffetIndesirable="+idEffet+", idModeAdmin="+idModeAdmin+" WHERE nom='"+name+"'");
 		}catch (SQLException e){
 			throw e;
 		}

@@ -30,6 +30,7 @@ public class MedicineAdd extends JDialog implements MyView{
 	private static JTextField txtNom;
 	private static JComboBox<String> cbxFormes;
 	private static JComboBox<String> cbxEffets;
+	private static JComboBox<String> cbxModeAdmin;
 	private static JTextField txtBrevet;
 
 	/**
@@ -65,6 +66,17 @@ public class MedicineAdd extends JDialog implements MyView{
 	}
 	
 	
+	
+	/**
+	 * Méthode statique permettant d'obtenir la sélection de la liste déroulante modeAdmin
+	 * @return la selection de la liste déroulante modeAdmin
+	 */
+	public static String getTxtModeAdmin(){
+		return (String) cbxModeAdmin.getSelectedItem();
+	}
+	
+	
+	
 	/**
 	 * Méthode statique permettant d'obtenir le contenu du champ texte date brevet
 	 * @return le contenu du champ texte date brevet
@@ -85,7 +97,7 @@ public class MedicineAdd extends JDialog implements MyView{
 	 * Create the dialog.
 	 * @param forms les formes à intégrer dans la liste déroulante
 	 */
-	public MedicineAdd(String[] forms, String[] effets) {
+	public MedicineAdd(String[] forms, String[] effets, String[] modeAdmin) {
 		setTitle("M\u00E9dicament - Ajouter");
 		setModal(true);
 		setBounds(100, 100, 450, 300);
@@ -122,6 +134,15 @@ public class MedicineAdd extends JDialog implements MyView{
 		cbxEffets.setBounds(140, 160, 192, 20);
 		contentPanel.add(cbxEffets);
 		
+		
+		JLabel lblModeAdmin = new JLabel("Mode d'administration :");
+		lblModeAdmin.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblModeAdmin.setBounds(20, 190, 70, 14);
+		contentPanel.add(lblModeAdmin);
+		
+		cbxModeAdmin = new JComboBox<String>(modeAdmin);
+		cbxModeAdmin.setBounds(140, 190, 192, 20);
+		contentPanel.add(cbxModeAdmin);
 		
 		JLabel lblDateBrevet = new JLabel("Date brevet :");
 		lblDateBrevet.setHorizontalAlignment(SwingConstants.RIGHT);

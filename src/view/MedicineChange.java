@@ -29,6 +29,7 @@ public class MedicineChange extends JDialog implements MyView{
 	private static JTextField txtNom;
 	private static JComboBox<String> cbxFormes;
 	private static JComboBox<String> cbxEffets;
+	private static JComboBox<String> cbxModeAdmin;
 	private static JTextField txtBrevet;
 	/**
 	 * Méthode statique permettant d'obtenir le contenu du champ texte nom
@@ -53,6 +54,16 @@ public class MedicineChange extends JDialog implements MyView{
 		return (String) cbxEffets.getSelectedItem();
 	}
 	
+	
+	/**
+	 * Méthode statique permettant d'obtenir la sélection de la liste déroulante modeAdmin
+	 * @return la selection de la liste déroulante modeAdmin
+	 */
+	public static String getTxtModeAdmin(){
+		return (String) cbxModeAdmin.getSelectedItem();
+	}
+	
+	
 	/**
 	 * Méthode statique permettant d'obtenir le contenu du champ texte date brevet
 	 * @return le contenu du champ texte date brevet
@@ -68,7 +79,7 @@ public class MedicineChange extends JDialog implements MyView{
 	 * @param forms les formes à intégrer dans la liste déroulante
 	 * @param medicine le détail du médicament à modifier
 	 */
-	public MedicineChange(String[] forms, String[] effets, String[] medicine) {
+	public MedicineChange(String[] forms, String[] effets, String[] modeAdmin, String[] medicine) {
 		setTitle("M\u00E9dicament - Modifier");
 		setModal(true);
 		setBounds(100, 100, 450, 300);
@@ -110,6 +121,18 @@ public class MedicineChange extends JDialog implements MyView{
 		contentPanel.add(cbxEffets);
 		cbxEffets.setSelectedItem(medicine[2]);
 		
+		
+		JLabel lblModeAdmin = new JLabel("Mode d'administration :");
+		lblModeAdmin.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblModeAdmin.setBounds(63, 180, 70, 14);
+		contentPanel.add(lblModeAdmin);
+		
+		cbxModeAdmin = new JComboBox<String>(modeAdmin);
+		cbxModeAdmin.setBounds(140, 180, 192, 20);
+		contentPanel.add(cbxModeAdmin);
+		cbxModeAdmin.setSelectedItem(medicine[3]);
+		
+		
 		JLabel lblDateBrevet = new JLabel("Date brevet :");
 		lblDateBrevet.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDateBrevet.setBounds(53, 86, 80, 14);
@@ -119,7 +142,7 @@ public class MedicineChange extends JDialog implements MyView{
 		txtBrevet.setBounds(140, 83, 192, 20);
 		contentPanel.add(txtBrevet);
 		txtBrevet.setColumns(10);
-		txtBrevet.setText(medicine[3]);
+		txtBrevet.setText(medicine[4]);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));

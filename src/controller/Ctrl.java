@@ -14,6 +14,7 @@ import library.Persistence;
 import model.Effet;
 import model.Form;
 import model.Medicine;
+import model.ModeAdmin;
 import view.MedicineAdd;
 import view.MedicineChange;
 import view.MedicineHome;
@@ -43,6 +44,21 @@ public class Ctrl implements ActionListener, MouseListener{
 			new Effet(Integer.parseInt(dataEffet[i][0]),dataEffet[i][1]);
 		}
 		
+		
+		//Création des objets Effet
+		String[][] dataModeAdmin = null;
+		try {
+			dataModeAdmin = Persistence.load("mode_admin");
+		} catch (SQLException e) {
+			String message = "Erreur lors de l'echange avec la base de données. L'application a rencontrée l'erreur : "+e.getMessage();
+			JOptionPane.showMessageDialog(null,message,"Erreur SQL",JOptionPane.ERROR_MESSAGE);
+		}
+		for(int i=0;i<dataModeAdmin.length;i++){
+			new ModeAdmin(Integer.parseInt(dataModeAdmin[i][0]),dataModeAdmin[i][1]);
+		}
+				
+				
+				
 		//Création des objets Forme
 		String[][] dataForm = null;
 		try {
@@ -64,7 +80,7 @@ public class Ctrl implements ActionListener, MouseListener{
 			JOptionPane.showMessageDialog(null,message,"Erreur SQL",JOptionPane.ERROR_MESSAGE);
 		}
 		for(int i=0;i<dataMed.length;i++){
-			new Medicine(dataMed[i][1],Form.getFormById(Integer.parseInt(dataMed[i][5])),Effet.getEffetById(Integer.parseInt(dataMed[i][6])),DatesConverter.USStringToDate(dataMed[i][2]));
+			new Medicine(dataMed[i][1],Form.getFormById(Integer.parseInt(dataMed[i][5])),Effet.getEffetById(Integer.parseInt(dataMed[i][6])),ModeAdmin.getModeAdminById(Integer.parseInt(dataMed[i][7])), DatesConverter.USStringToDate(dataMed[i][2]));
 		}
 	}
 
@@ -101,7 +117,7 @@ public class Ctrl implements ActionListener, MouseListener{
 			switch(what){
 			case "ajout":
 				//Création de la vue d'ajout d'un médicament
-				MedicineAdd frame = new MedicineAdd(this.formsBox(), this.effetsBox());
+				MedicineAdd frame = new MedicineAdd(this.formsBox(), this.effetsBox(), this.modeAdminBox());
 				//Assignation d'un observateur sur cette vue
 				frame.assignListener(this);
 				//Affichage de la vue
@@ -109,7 +125,7 @@ public class Ctrl implements ActionListener, MouseListener{
 				break;
 			case "rechercherModifier":				
 				String[][] dataTable = this.medicinesTable();
-				String[] dataColumns = {"Nom","Forme", "Effet","Brevet"};
+				String[] dataColumns = {"Nom", "Forme", "Effet", "Mode admin", "Brevet"};
 				//Création de la vue de recherche d'un médicament
 				MedicineSearch frame1 = new MedicineSearch(dataTable,dataColumns);
 				//Assignation d'un observateur sur cette vue
@@ -132,13 +148,15 @@ public class Ctrl implements ActionListener, MouseListener{
 					String nomF = MedicineAdd.getTxtForm();
 					Form forme = Form.getFormByName(nomF);
 					String nomE = MedicineAdd.getTxtEffet();
+					String nomMA = MedicineAdd.getTxtModeAdmin();
 					Effet effet = Effet.getEffetByName(nomE);
+					ModeAdmin modeAdmin = ModeAdmin.getModeAdminByName(nomMA);
 					String dateB = MedicineAdd.getTxtPatentDate();
 					//Création du nouvel objet Medicine
-					Medicine med = new Medicine(nom,forme, effet,DatesConverter.FRStringToDate(dateB));
+					Medicine med = new Medicine(nom, forme, effet, modeAdmin, DatesConverter.FRStringToDate(dateB));
 					//INSERT dans la BD
 					try {
-						Persistence.insertMedicine(med.getName(),med.getItsForm().getId(),med.getEffet().getId(),med.getPatentDate());
+						Persistence.insertMedicine(med.getName(), med.getItsForm().getId(), med.getEffet().getId(), med.getModeAdmin().getId(), med.getPatentDate());
 						//Message de confirmation pour l'utilisateur
 						JOptionPane.showMessageDialog(null,"Le médicament a bien été ajouté","Confirmation Enregistrement",JOptionPane.INFORMATION_MESSAGE);
 						//Réinitialisation des champs
@@ -166,6 +184,8 @@ public class Ctrl implements ActionListener, MouseListener{
 				Form forme = Form.getFormByName(nomF);
 				String nomE = MedicineChange.getTxtEffet();
 				Effet effet = Effet.getEffetByName(nomE);
+				String nomMA = MedicineChange.getTxtModeAdmin();
+				ModeAdmin modeAdmin = ModeAdmin.getModeAdminByName(nomMA);
 				String dateB = MedicineChange.getTxtPatentDate();
 				//Récupération de l'objet Medicine à modifier
 				Medicine med = Medicine.getMedicineByName(nom);
@@ -173,12 +193,13 @@ public class Ctrl implements ActionListener, MouseListener{
 				med.setItsForm(forme);
 				med.setPatentDate(DatesConverter.FRStringToDate(dateB));
 				med.setEffet(effet);
+				med.setModeAdmin(modeAdmin);
 				//UPDATE dans la BD
 				try {
-					Persistence.updateMedicine(med.getName(),med.getItsForm().getId(),med.getEffet().getId(),med.getPatentDate());
+					Persistence.updateMedicine(med.getName(), med.getItsForm().getId(), med.getEffet().getId(), med.getModeAdmin().getId() ,med.getPatentDate());
 					//Mise à jour de la jtable
 					String[][] dataTable = this.medicinesTable();
-					String[] dataColumns = {"Nom","Forme","Effet indésirable","Brevet"};
+					String[] dataColumns = {"Nom","Forme","Effet indésirable","Mode d'administration","Brevet"};
 					MedicineSearch.setTable(dataTable, dataColumns);
 					//Modification du bouton (annuler devient fermer)
 					MedicineChange.btnAnnuler.setText("Fermer");
@@ -196,16 +217,17 @@ public class Ctrl implements ActionListener, MouseListener{
 
 	/**
 	 * Méthode permettant d'interroger le modèle afin de construire un tableau contenant tous les médicaments
-	 * @return un tableau à deux dimensions contenant tous les médicaments (nom,idForme,dateBrevet)
+	 * @return un tableau à deux dimensions contenant tous les médicaments (nom,idForme,idEffet,idModeAdmin,dateBrevet)
 	 */
 	private String[][] medicinesTable() {
 		int i=0;
-		String[][] liste=new String[Medicine.allTheMedicines.size()][4];
+		String[][] liste=new String[Medicine.allTheMedicines.size()][5];
 		for(Medicine m : Medicine.allTheMedicines){
 			liste[i][0]=m.getName();
 			liste[i][1]=m.getItsForm().getName();
 			liste[i][2]=m.getEffet().getName();
-			liste[i][3]=DatesConverter.dateToStringFR(m.getPatentDate());
+			liste[i][3]=m.getModeAdmin().getName();
+			liste[i][4]=DatesConverter.dateToStringFR(m.getPatentDate());
 			i++;
 		}
 		return liste;
@@ -239,6 +261,22 @@ public class Ctrl implements ActionListener, MouseListener{
 		return liste;
 	}
 	
+	
+	
+	/**
+	 * Méthode permettant d'interroger le modèle afin de construire un tableau contenant toutes les formes
+	 * @return un tableau à une dimension contenant toutes les formes (nom)
+	 */
+	private String[] modeAdminBox(){
+		int i=0;
+		String[] liste=new String[ModeAdmin.lesModeAdmin.size()];
+		for(ModeAdmin l : ModeAdmin.lesModeAdmin){
+			liste[i]=l.getName();
+			i++;
+		}
+		return liste;
+	}
+	
 
 	/**
 	 * Méthode déclanchée lors de clics souris sur l'application
@@ -254,13 +292,14 @@ public class Ctrl implements ActionListener, MouseListener{
 			//Récupération du médicament à partir de ces informations
 			Medicine med = Medicine.getMedicineByName(laTable.getValueAt(row,0).toString());
 			//Création d'un tableau contenant le détail du médicament
-			String[] data = new String[4];
+			String[] data = new String[5];
 			data[0]=med.getName();
 			data[1]=med.getItsForm().getName();
 			data[2]=med.getEffet().getName();
-			data[3]=DatesConverter.dateToStringFR(med.getPatentDate());
+			data[3]=med.getModeAdmin().getName();
+			data[4]=DatesConverter.dateToStringFR(med.getPatentDate());
 			//Création de la vue de modification du médicament sélectionné dans la jtable
-			MedicineChange frame = new MedicineChange(this.formsBox(), this.effetsBox(),data);
+			MedicineChange frame = new MedicineChange(this.formsBox(), this.effetsBox(), this.modeAdminBox(),data);
 			//Assignation d'un observateur sur cette vue
 			frame.assignListener(this);
 			//Affichage de la vue
