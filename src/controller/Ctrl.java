@@ -74,7 +74,7 @@ public class Ctrl implements ActionListener, MouseListener{
 		//Création des objets Medicine
 		String[][] dataMed = null;
 		try {
-			dataMed = Persistence.load("Medicament");
+			dataMed = Persistence.load("medicament");
 		} catch (SQLException e) {
 			String message = "Erreur lors de l'echange avec la base de données. L'application a rencontrée l'erreur : "+e.getMessage();
 			JOptionPane.showMessageDialog(null,message,"Erreur SQL",JOptionPane.ERROR_MESSAGE);
